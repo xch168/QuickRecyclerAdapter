@@ -1,0 +1,1 @@
+include ':app', ':quick-recycler-adapter'
