@@ -19,11 +19,10 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mNewsAdapter = new NewsAdapter(this);
-        mNewsAdapter.add(new News("1"));
-        mNewsAdapter.add(new News("2"));
-        mNewsAdapter.add(new News("3"));
-        mNewsAdapter.add(new News("4"));
-        mNewsAdapter.add(new News("5"));
+        for (int i = 0; i < 100; i++) {
+            mNewsAdapter.add(new News(i + ""));
+        }
+
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mNewsAdapter);
