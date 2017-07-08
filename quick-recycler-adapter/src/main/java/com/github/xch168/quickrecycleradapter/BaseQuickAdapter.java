@@ -14,6 +14,7 @@ import java.util.List;
 public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickViewHolder> {
 
     private static final int TYPE_LOAD_MORE_VIEW = 1;
+    private static final int TYPE_EMPTY_VIEW = 2;
 
 
     protected final Context context;
@@ -41,6 +42,9 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
             case TYPE_LOAD_MORE_VIEW:
                 layoutId = mLoadMoreView.getLayoutId();
                 break;
+            case TYPE_EMPTY_VIEW:
+                layoutId = getEmptyViewLayoutId();
+                break;
             default:
                 layoutId = getLayoutResId(viewType);
                 break;
@@ -57,6 +61,9 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
             case TYPE_LOAD_MORE_VIEW:
                 mLoadMoreView.convert(holder);
                 break;
+            case TYPE_EMPTY_VIEW:
+
+                break;
             default:
                 convert(holder, data.get(position));
                 break;
@@ -72,6 +79,8 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
     public int getItemViewType(int position) {
         if (position > 0 && position == getLoadMoreViewPosition()) {
             return TYPE_LOAD_MORE_VIEW;
+        } else if (data.isEmpty()) {
+            return TYPE_EMPTY_VIEW;
         }
         return super.getItemViewType(position);
     }
@@ -80,6 +89,8 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
     public int getItemCount() {
         if (mLoadMoreEnable && !data.isEmpty()) {
             return data.size() + 1;
+        } else if (data.isEmpty()) {
+            return 1;
         }
         return data.size();
     }
@@ -131,6 +142,10 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
     protected abstract int getLayoutResId(int viewType);
 
     protected abstract void convert(QuickViewHolder holder, T item);
+
+    protected int getEmptyViewLayoutId() {
+        return R.layout.quick_empty_view;
+    }
 
     public void setLoadMoreEnd() {
         mLoadMoreView.setLoadMoreStatus(BaseLoadMoreView.STATUS_END);

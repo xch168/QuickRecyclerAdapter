@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         if (pageNum == 1) {
                             mGankAdapter.clear();
                         }
+                        gankData.gankList.clear();
                         mGankAdapter.addAll(gankData.gankList);
                         if (gankData.gankList.isEmpty() || gankData.gankList.size() < PAGE_SIZE) {
                             mGankAdapter.setLoadMoreEnd();
