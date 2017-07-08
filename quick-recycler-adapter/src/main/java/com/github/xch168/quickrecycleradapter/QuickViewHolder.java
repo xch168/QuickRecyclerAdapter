@@ -163,6 +163,18 @@ public class QuickViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public QuickViewHolder setOnClickListener(int viewId, View.OnClickListener listener) {
+        View view = retrieveView(viewId);
+        view.setOnClickListener(listener);
+        return this;
+    }
+
+    public QuickViewHolder setOnLongClickListener(int viewId, View.OnLongClickListener listener) {
+        View view = retrieveView(viewId);
+        view.setOnLongClickListener(listener);
+        return this;
+    }
+
     @SuppressWarnings("unchecked")
     protected <T extends View> T retrieveView(int viewId) {
         View view = views.get(viewId);

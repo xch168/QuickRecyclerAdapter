@@ -13,9 +13,14 @@ import java.util.List;
 
 public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickViewHolder> {
 
+    private static final int TYPE_LOAD_MORE_VIEW = 1;
+
+
     protected final Context context;
 
     protected final List<T> data;
+
+    private BaseLoadMoreView mLoadMoreView;
 
     public BaseQuickAdapter(Context context) {
         this(context, null);
@@ -24,19 +29,50 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
     public BaseQuickAdapter(Context context, List<T> data) {
         this.context = context;
         this.data = data == null ? new ArrayList<T>() : new ArrayList<>(data);
+        this.mLoadMoreView = getLoadMoreView();
     }
 
     @Override
     public QuickViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        return QuickViewHolder.create(parent, getLayoutResId(viewType));
+        int layoutId;
+        switch (viewType) {
+            case TYPE_LOAD_MORE_VIEW:
+                layoutId = mLoadMoreView.getLayoutId();
+                break;
+            default:
+                layoutId = getLayoutResId(viewType);
+                break;
+        }
+        return QuickViewHolder.create(parent, layoutId);
     }
 
     @Override
     public void onBindViewHolder(QuickViewHolder holder, int position) {
 
-        convert(holder, data.get(position));
+        int viewType = holder.getItemViewType();
+        switch (viewType) {
 
+            case TYPE_LOAD_MORE_VIEW:
+                mLoadMoreView.convert(holder);
+                break;
+            default:
+                convert(holder, data.get(position));
+                break;
+        }
+
+    }
+
+    protected BaseLoadMoreView getLoadMoreView() {
+        return new QuickLoadMoreView();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == getItemCount() - 1) {
+            return TYPE_LOAD_MORE_VIEW;
+        }
+        return super.getItemViewType(position);
     }
 
     @Override
@@ -91,5 +127,23 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
     protected abstract int getLayoutResId(int viewType);
 
     protected abstract void convert(QuickViewHolder holder, T item);
+
+    public void setLoadMoreEnd() {
+        mLoadMoreView.setLoadMoreStatus(BaseLoadMoreView.STATUS_END);
+        notifyItemChanged(getItemCount() - 1);
+    }
+
+    public void setLoadMoreFail() {
+        mLoadMoreView.setLoadMoreStatus(BaseLoadMoreView.STATUS_FAIL);
+        notifyItemChanged(getItemCount() - 1);
+    }
+
+    public void setOnLoadMoreListener(OnLoadMoreListener listener) {
+        mLoadMoreView.setOnLoadMoreListener(listener);
+    }
+
+    public interface OnLoadMoreListener {
+        void onLoadMore();
+    }
 
 }
