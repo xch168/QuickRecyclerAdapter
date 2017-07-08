@@ -21,6 +21,7 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
     protected final List<T> data;
 
     private BaseLoadMoreView mLoadMoreView;
+    private boolean mLoadMoreEnable = false;
 
     public BaseQuickAdapter(Context context) {
         this(context, null);
@@ -69,7 +70,7 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
 
     @Override
     public int getItemViewType(int position) {
-        if (position == getItemCount() - 1) {
+        if (position == getLoadMoreViewPosition()) {
             return TYPE_LOAD_MORE_VIEW;
         }
         return super.getItemViewType(position);
@@ -77,6 +78,9 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
 
     @Override
     public int getItemCount() {
+        if (mLoadMoreEnable) {
+            return data.size() + 1;
+        }
         return data.size();
     }
 
@@ -130,12 +134,20 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
 
     public void setLoadMoreEnd() {
         mLoadMoreView.setLoadMoreStatus(BaseLoadMoreView.STATUS_END);
-        notifyItemChanged(getItemCount() - 1);
+        notifyItemChanged(getLoadMoreViewPosition());
     }
 
     public void setLoadMoreFail() {
         mLoadMoreView.setLoadMoreStatus(BaseLoadMoreView.STATUS_FAIL);
-        notifyItemChanged(getItemCount() - 1);
+        notifyItemChanged(getLoadMoreViewPosition());
+    }
+
+    public int getLoadMoreViewPosition() {
+        return data.size();
+    }
+
+    public void setLoadMoreEnable(boolean enable) {
+        mLoadMoreEnable = enable;
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener listener) {

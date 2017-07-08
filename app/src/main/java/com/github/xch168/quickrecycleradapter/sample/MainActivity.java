@@ -25,7 +25,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private Retrofit retrofit;
     private GankService service;
 
+    private static final int PAGE_SIZE = 20;
     private int pageNum = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mGankAdapter = new GankAdapter(this);
+        mGankAdapter.setLoadMoreEnable(true);
         mGankAdapter.setOnLoadMoreListener(this);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void loadData(final int pageNum) {
 
-        service.listGank(pageNum, 20)
+        service.listGank(pageNum, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<GankData>() {
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             mGankAdapter.clear();
                         }
                         mGankAdapter.addAll(gankData.gankList);
-                        if (gankData.gankList.isEmpty()) {
+                        if (gankData.gankList.isEmpty() || gankData.gankList.size() < PAGE_SIZE) {
                             mGankAdapter.setLoadMoreEnd();
                         }
                     }
