@@ -70,7 +70,7 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
 
     @Override
     public int getItemViewType(int position) {
-        if (position == getLoadMoreViewPosition()) {
+        if (position > 0 && position == getLoadMoreViewPosition()) {
             return TYPE_LOAD_MORE_VIEW;
         }
         return super.getItemViewType(position);
@@ -78,7 +78,7 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
 
     @Override
     public int getItemCount() {
-        if (mLoadMoreEnable) {
+        if (mLoadMoreEnable && !data.isEmpty()) {
             return data.size() + 1;
         }
         return data.size();
