@@ -5,6 +5,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.github.xch168.quickrecycleradapter.BaseQuickAdapter;
 
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private static final int PAGE_SIZE = 20;
     private int pageNum = 1;
 
+    private static boolean flag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mGankAdapter = new GankAdapter(this);
         mGankAdapter.setLoadMoreEnable(true);
         mGankAdapter.setOnLoadMoreListener(this);
+        mGankAdapter.setOnEmptyViewClickListener(R.id.btn_refresh, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onRefresh();
+            }
+        });
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mGankAdapter);
@@ -82,7 +90,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         if (pageNum == 1) {
                             mGankAdapter.clear();
                         }
-                        gankData.gankList.clear();
+
+                        if (!flag) {
+                            gankData.gankList.clear();
+                            flag = true;
+                        }
+
                         mGankAdapter.addAll(gankData.gankList);
                         if (gankData.gankList.isEmpty() || gankData.gankList.size() < PAGE_SIZE) {
                             mGankAdapter.setLoadMoreEnd();

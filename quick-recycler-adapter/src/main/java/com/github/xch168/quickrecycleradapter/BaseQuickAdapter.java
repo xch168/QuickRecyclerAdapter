@@ -2,6 +2,7 @@ package com.github.xch168.quickrecycleradapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -21,8 +22,14 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
 
     protected final List<T> data;
 
+    // load more view
     private BaseLoadMoreView mLoadMoreView;
     private boolean mLoadMoreEnable = false;
+
+    // empty view
+    private int mEmptyViewLayoutId;
+    private int mEmptyClickableViewId;
+    private View.OnClickListener mOnEmptyViewClickListener;
 
     public BaseQuickAdapter(Context context) {
         this(context, null);
@@ -62,7 +69,10 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
                 mLoadMoreView.convert(holder);
                 break;
             case TYPE_EMPTY_VIEW:
-
+                View clickableView = holder.retrieveView(getEmptyViewClickableViewId());
+                if (mOnEmptyViewClickListener != null &&  clickableView != null) {
+                    clickableView.setOnClickListener(mOnEmptyViewClickListener);
+                }
                 break;
             default:
                 convert(holder, data.get(position));
@@ -79,7 +89,7 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
     public int getItemViewType(int position) {
         if (position > 0 && position == getLoadMoreViewPosition()) {
             return TYPE_LOAD_MORE_VIEW;
-        } else if (data.isEmpty()) {
+        } else if (getEmptyViewLayoutId() > 0 && data.isEmpty()) {
             return TYPE_EMPTY_VIEW;
         }
         return super.getItemViewType(position);
@@ -89,7 +99,7 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
     public int getItemCount() {
         if (mLoadMoreEnable && !data.isEmpty()) {
             return data.size() + 1;
-        } else if (data.isEmpty()) {
+        } else if (getEmptyViewLayoutId() > 0 && data.isEmpty()) {
             return 1;
         }
         return data.size();
@@ -143,8 +153,21 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<QuickView
 
     protected abstract void convert(QuickViewHolder holder, T item);
 
+    public void setEmptyViewLayoutId(int layoutId) {
+        mEmptyViewLayoutId = layoutId;
+    }
+
     protected int getEmptyViewLayoutId() {
-        return R.layout.quick_empty_view;
+        return mEmptyViewLayoutId;
+    }
+
+    public void setOnEmptyViewClickListener(int clickableViewId, View.OnClickListener listener) {
+        mEmptyClickableViewId = clickableViewId;
+        mOnEmptyViewClickListener = listener;
+    }
+
+    protected int getEmptyViewClickableViewId() {
+        return mEmptyClickableViewId;
     }
 
     public void setLoadMoreEnd() {

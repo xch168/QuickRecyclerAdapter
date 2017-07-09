@@ -21,6 +21,10 @@ public class GankAdapter extends QuickAdapter<Gank> {
         return R.layout.repo_item;
     }
 
+    @Override
+    protected int getEmptyViewLayoutId() {
+        return R.layout.quick_empty_view;
+    }
 
     @Override
     protected void convert(QuickViewHolder holder, Gank item) {
