@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
+apply from: rootProject.file("secret.gradle")
 
 android {
     compileSdkVersion 26
@@ -34,14 +35,14 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
-// ./gradlew clean build generatePomFileForReleasePublication bintrayUpload -PbintrayUser=xch168 -PbintrayKey=<BINTRAY_KEY> -PdryRun=false
 publish {
     userOrg = 'xch168'                      // bintray.com用户名
-    bintrayUser = 'xch168'
     groupId = 'com.github.xch168'           // jcenter上的路径
     artifactId = 'quick-recycler-adapter'   // 项目名称
-    publishVersion = '0.0.1'                // 版本号
+    publishVersion = '0.0.2'                // 版本号
     desc = 'quick adapter for RecyclerView'
     website = 'https://github.com/xch168/QuickRecyclerAdapter'
-    dryRun = false
+
+    bintrayUser = bintray_user
+    bintrayKey = bintray_key
 }
