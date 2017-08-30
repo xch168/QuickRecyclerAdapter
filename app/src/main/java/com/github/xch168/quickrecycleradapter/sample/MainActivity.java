@@ -1,13 +1,17 @@
 package com.github.xch168.quickrecycleradapter.sample;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.github.xch168.quickrecycleradapter.BaseQuickAdapter;
+import com.github.xch168.quickrecycleradapter.DividerGridItemDecoration;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -60,7 +64,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         });
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        Drawable dividerHorizontal = getDrawable(R.drawable.divider_horizontal);
+        Drawable dividerVertical = getDrawable(R.drawable.divider_vertical);
+        DividerItemDecoration itemDecorationHorizontal = new DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL);
+        DividerItemDecoration itemDecorationVertical = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+        itemDecorationHorizontal.setDrawable(dividerHorizontal);
+        itemDecorationVertical.setDrawable(dividerVertical);
+        //mRecyclerView.addItemDecoration(itemDecorationHorizontal);
+        //mRecyclerView.addItemDecoration(itemDecorationVertical);
+        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(this));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mRecyclerView.setAdapter(mGankAdapter);
     }
 
